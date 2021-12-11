@@ -3,6 +3,8 @@
 package lesson7.task1
 
 import java.io.File
+import java.lang.Integer.max
+import java.util.*
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -113,7 +115,17 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val text = mutableListOf<String>()
+    var maxSize = -1
+    File(inputName).forEachLine { line ->
+        val trimmedLine = line.trim()
+        text.add(trimmedLine)
+        maxSize = max(trimmedLine.length, maxSize)
+    }
+    File(outputName).bufferedWriter().use { writer ->
+        for (i in text)
+            writer.appendLine(i.padStart(i.length + (maxSize - i.length) / 2, ' '))
+    }
 }
 
 /**
@@ -232,8 +244,19 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  *
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
+fun checkUniqueness(str: String): Boolean = str.lowercase(Locale.getDefault()).toSet().size == str.length
+
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    var answer = Pair(0, mutableListOf(""))
+    File(inputName).forEachLine { line ->
+        if (checkUniqueness(line)) {
+            if (line.length == answer.first)
+                answer.second.add(line)
+            else if (line.length > answer.first)
+                answer = Pair(line.length, mutableListOf(line))
+        }
+    }
+    File(outputName).bufferedWriter().use { it.appendLine(answer.second.joinToString()) }
 }
 
 /**
